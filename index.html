@@ -28,10 +28,45 @@ canvas{background:#0b1220;border:2px solid #334155;border-radius:10px;display:bl
 .footer{text-align:center;color:#475569;font-size:12px;margin-top:26px}
 .btn{background:#4dabff;color:#08101f;border:none;padding:9px 16px;border-radius:10px;font-weight:700;cursor:pointer;font-size:14px}
 .btn:hover{background:#6bbdff}
+#auth{position:fixed;inset:0;background:linear-gradient(160deg,#0f172a,#1e293b);display:flex;align-items:center;justify-content:center;z-index:999;padding:20px}
+.authcard{background:#1e293b;border:1px solid #334155;border-radius:18px;padding:26px 22px;width:100%;max-width:360px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+.authcard h2{text-align:center;font-size:18px;margin-bottom:18px;color:#e2e8f0}
+.tabbar{display:flex;gap:8px;margin-bottom:16px}
+.tabbar button{flex:1;background:#0f172a;border:1px solid #334155;color:#94a3b8;padding:10px;border-radius:10px;cursor:pointer;font-size:15px;font-weight:700}
+.tabbar button.on{background:#4dabff;color:#08101f;border-color:#4dabff}
+#auth input{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:1px solid #334155;background:#0f172a;color:#e2e8f0;font-size:15px;outline:none}
+#auth input:focus{border-color:#4dabff}
+.btnbig{width:100%;margin-top:10px;padding:12px;border:none;border-radius:10px;background:#4dabff;color:#08101f;font-size:16px;font-weight:800;cursor:pointer}
+.btnbig:hover{background:#6bbdff}
+#auth-msg{min-height:20px;margin-top:10px;text-align:center;font-size:13px;color:#f87171}
+#auth-msg.ok{color:#34d399}
+.logout{position:fixed;right:12px;top:12px;z-index:50;background:#334155;border:none;color:#e2e8f0;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px}
 </style>
 </head>
 <body>
+<div id="auth">
+  <div class="authcard">
+    <h2>🕹️ 小胖叮 · 经典游戏合集</h2>
+    <div class="tabbar">
+      <button id="tab-login" class="on" onclick="authTab('login')">登录</button>
+      <button id="tab-reg" onclick="authTab('reg')">注册</button>
+    </div>
+    <div id="form-login">
+      <input id="li-user" placeholder="用户名" autocomplete="username">
+      <input id="li-pass" type="password" placeholder="密码" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      <button class="btnbig" onclick="doLogin()">登 录</button>
+    </div>
+    <div id="form-reg" style="display:none">
+      <input id="rg-user" placeholder="用户名（至少 2 位）">
+      <input id="rg-pass" type="password" placeholder="密码（至少 4 位）">
+      <input id="rg-pass2" type="password" placeholder="确认密码" onkeydown="if(event.key==='Enter')doRegister()">
+      <button class="btnbig" onclick="doRegister()">注 册</button>
+    </div>
+    <div id="auth-msg"></div>
+  </div>
+</div>
 <div class="wrap">
+<button class="logout" onclick="doLogout()">退出登录</button>
   <div id="menu">
     <h1>🕹️ 经典游戏合集</h1>
     <div class="sub">点一个开始玩 · 手机电脑都能玩 · 键盘 / 触屏操作</div>
@@ -61,6 +96,64 @@ canvas{background:#0b1220;border:2px solid #334155;border-radius:10px;display:bl
 </div>
 
 <script>
+function authTab(t){
+  document.getElementById('form-login').style.display = t==='login'?'block':'none';
+  document.getElementById('form-reg').style.display = t==='reg'?'block':'none';
+  document.getElementById('tab-login').className = t==='login'?'on':'';
+  document.getElementById('tab-reg').className = t==='reg'?'on':'';
+  authMsg('');
+}
+function authMsg(m, ok){ var e=document.getElementById('auth-msg'); e.textContent=m||''; e.className = ok?'ok':''; }
+function simpleHash(s){ var h=0,i; for(i=0;i<s.length;i++){ h=(h*31 + s.charCodeAt(i))|0; } return 'h'+(h>>>0).toString(16); }
+async function sha(s){
+  try{
+    if(window.crypto && crypto.subtle){
+      var b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+      return Array.prototype.map.call(new Uint8Array(b), function(x){ return ('0'+x.toString(16)).slice(-2); }).join('');
+    }
+  }catch(e){}
+  return simpleHash(s);
+}
+function getUsers(){ try{ return JSON.parse(localStorage.getItem('xpd_users')||'{}'); }catch(e){ return {}; } }
+function saveUsers(u){ localStorage.setItem('xpd_users', JSON.stringify(u)); }
+function showApp(){ document.getElementById('auth').style.display='none'; document.querySelector('.wrap').style.display='block'; }
+function showAuth(){ document.querySelector('.wrap').style.display='none'; document.getElementById('auth').style.display='flex'; }
+async function doRegister(){
+  var n=(document.getElementById('rg-user').value||'').trim();
+  var p=document.getElementById('rg-pass').value||'';
+  var p2=document.getElementById('rg-pass2').value||'';
+  if(n.length<2) return authMsg('用户名至少 2 位');
+  if(p.length<4) return authMsg('密码至少 4 位');
+  if(p!==p2) return authMsg('两次密码不一致');
+  var u=getUsers();
+  if(u[n]) return authMsg('用户名已存在，请直接登录');
+  u[n]={ p: await sha(p), t: Date.now() }; saveUsers(u);
+  localStorage.setItem('xpd_session', n);
+  authMsg('注册成功，正在进入…', true);
+  setTimeout(showApp, 400);
+}
+async function doLogin(){
+  var n=(document.getElementById('li-user').value||'').trim();
+  var p=document.getElementById('li-pass').value||'';
+  var u=getUsers();
+  if(!u[n]) return authMsg('用户不存在，请先注册');
+  if(u[n].p !== await sha(p)) return authMsg('密码错误');
+  localStorage.setItem('xpd_session', n);
+  authMsg('登录成功，正在进入…', true);
+  setTimeout(showApp, 300);
+}
+function doLogout(){
+  localStorage.removeItem('xpd_session');
+  document.getElementById('li-pass').value='';
+  document.getElementById('rg-pass').value='';
+  document.getElementById('rg-pass2').value='';
+  authTab('login'); showAuth();
+}
+window.addEventListener('DOMContentLoaded', function(){
+  var s=localStorage.getItem('xpd_session'), u=getUsers();
+  if(s && u[s]){ showApp(); } else { showAuth(); }
+});
+
 var stop = null; var currentId = null;
 var titles = {snake:'🐍 贪吃蛇', tetris:'🧱 俄罗斯方块', g2048:'🔢 2048', mine:'💣 扫雷', breakout:'🧲 打砖块', gobang:'⚫ 五子棋', plane:'🚀 飞机大战', memory:'🃏 记忆翻牌', ttt:'⭕ 井字棋', pong:'🏓 乒乓球'};
 
