@@ -21,9 +21,9 @@ h1{text-align:center;font-size:26px;font-weight:800;letter-spacing:1px;margin-bo
 .back{background:#334155;border:none;color:#e2e8f0;padding:8px 14px;border-radius:10px;cursor:pointer;font-size:14px}
 .back:hover{background:#475569}
 .gtitle{font-size:18px;font-weight:700}
-.garea{display:flex;flex-direction:column;align-items:center;gap:12px}
+.garea{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;max-width:100%}
 .hud{font-size:14px;color:#cbd5e1}
-canvas{background:#0b1220;border:2px solid #334155;border-radius:10px;display:block;touch-action:none}
+canvas{background:#0b1220;border:2px solid #334155;border-radius:10px;display:block;touch-action:none;max-width:100%;height:auto}
 .hint{font-size:12px;color:#64748b;text-align:center;max-width:440px;line-height:1.6}
 .footer{text-align:center;color:#475569;font-size:12px;margin-top:26px}
 .btn{background:#4dabff;color:#08101f;border:none;padding:9px 16px;border-radius:10px;font-weight:700;cursor:pointer;font-size:14px}
@@ -41,6 +41,12 @@ canvas{background:#0b1220;border:2px solid #334155;border-radius:10px;display:bl
 #auth-msg{min-height:20px;margin-top:10px;text-align:center;font-size:13px;color:#f87171}
 #auth-msg.ok{color:#34d399}
 .logout{position:fixed;right:12px;top:12px;z-index:50;background:#334155;border:none;color:#e2e8f0;padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px}
+.gamecv{width:min(400px,90vw)}
+.dpad{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:10px}
+.drow{display:flex;gap:10px}
+.dbtn{width:clamp(54px,17vw,72px);height:clamp(46px,15vw,60px);font-size:clamp(18px,5vw,24px);background:#4dabff;color:#08101f;border:none;border-radius:12px;font-weight:800;cursor:pointer;touch-action:manipulation}
+.dbtn:active{background:#6bbdff;transform:scale(.94)}
+@media(max-width:480px){.wrap{padding:18px 12px 32px}h1{font-size:22px}}
 </style>
 </head>
 <body>
@@ -178,7 +184,7 @@ function key(fn){ window.addEventListener('keydown', fn); return function(){ win
 
 /* ============ 贪吃蛇 ============ */
 function startSnake(area){
-  area.innerHTML='<div class="hud">得分 <b id="sn-sc">0</b> ｜ 最高 <b id="sn-bt">0</b></div><canvas id="snake" width="400" height="400"></canvas><div class="hint">方向键 / WASD / 滑动 / 按钮 控制</div><div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:8px"><button class="btn" id="sn-u" style="width:64px;font-size:20px">▲</button><div style="display:flex;gap:8px"><button class="btn" id="sn-l" style="width:64px;font-size:20px">◀</button><button class="btn" id="sn-d" style="width:64px;font-size:20px">▼</button><button class="btn" id="sn-r" style="width:64px;font-size:20px">▶</button></div></div>';
+  area.innerHTML='<div class="hud">得分 <b id="sn-sc">0</b> ｜ 最高 <b id="sn-bt">0</b></div><canvas id="snake" class="gamecv" width="400" height="400"></canvas><div class="hint">手机：滑动屏幕 或 点下方方向键 ｜ 电脑：方向键 / WASD</div><div class="dpad"><button class="dbtn" id="sn-u" aria-label="上">▲</button><div class="drow"><button class="dbtn" id="sn-l" aria-label="左">◀</button><button class="dbtn" id="sn-d" aria-label="下">▼</button><button class="dbtn" id="sn-r" aria-label="右">▶</button></div></div>';
   var cv=area.querySelector('#snake'), ctx=cv.getContext('2d');
   var N=20, cell=20;
   var snake=[{x:10,y:10}], dir={x:1,y:0}, nd={x:1,y:0};
@@ -217,7 +223,7 @@ function startSnake(area){
 
 /* ============ 俄罗斯方块 ============ */
 function startTetris(area){
-  area.innerHTML='<div class="hud" style="display:flex;gap:24px;align-items:flex-start"><div>得分 <b id="tt-sc">0</b><br><canvas id="tet" width="240" height="480"></canvas></div><div><div class="hud" style="margin-bottom:6px">下一个</div><canvas id="tt-nx" width="96" height="96"></canvas><div class="hint" style="margin-top:8px">键盘 / 触屏按钮均可</div><div style="display:flex;gap:8px;margin-top:6px"><button class="btn" id="tb-l">◀</button><button class="btn" id="tb-r">▶</button><button class="btn" id="tb-d">⬇</button><button class="btn" id="tb-u">⟳</button><button class="btn" id="tb-h">⤓</button></div></div></div>';
+  area.innerHTML='<div class="hud" style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;justify-content:center"><div>得分 <b id="tt-sc">0</b><br><canvas id="tet" width="240" height="480"></canvas></div><div><div class="hud" style="margin-bottom:6px">下一个</div><canvas id="tt-nx" width="96" height="96"></canvas><div class="hint" style="margin-top:8px">键盘 / 触屏按钮均可</div><div style="display:flex;gap:8px;margin-top:6px"><button class="btn" id="tb-l">◀</button><button class="btn" id="tb-r">▶</button><button class="btn" id="tb-d">⬇</button><button class="btn" id="tb-u">⟳</button><button class="btn" id="tb-h">⤓</button></div></div></div>';
   var cv=area.querySelector('#tet'), ctx=cv.getContext('2d');
   var nx=area.querySelector('#tt-nx'), nctx=nx.getContext('2d');
   var CW=10,CH=20,cell=24, grid=[], score=0, t;
@@ -270,13 +276,17 @@ function start2048(area){
   area.innerHTML='<div class="hud">得分 <b id="g-sc">0</b> ｜ 最高 <b id="g-bt">0</b></div><div id="g-board" style="position:relative;width:400px;height:400px;background:#0b1220;border:2px solid #334155;border-radius:10px"></div><div class="hint">方向键 / WASD 移动 · 相同数字合并 · 拼出 2048</div>';
   var board=area.querySelector('#g-board'), sc=area.querySelector('#g-sc'), bt=area.querySelector('#g-bt');
   var best=+(localStorage.getItem('g2048-best')||0);bt.textContent=best;
-  var g=[], size=4, cell=88, gap=12, score=0, over=false;
+  var avail=Math.min(400,(window.innerWidth||400)-44), gap=12, size=4;
+  var cell=Math.max(46, Math.floor((avail-16-3*gap)/4));
+  var bw=16+4*cell+3*gap;
+  board.style.width=bw+'px'; board.style.height=bw+'px';
+  var g=[], score=0, over=false;
   function empty(){var e=[];for(var r=0;r<size;r++)for(var c=0;c<size;c++)if(!g[r][c])e.push([r,c]);return e;}
   function addTile(){var e=empty();if(!e.length)return;var p=e[(Math.random()*e.length)|0];g[p[0]][p[1]]=Math.random()<0.9?2:4;}
   function colors(v){return {0:'#1e293b',2:'#334155',4:'#475569',8:'#fb923c',16:'#f97316',32:'#f43f5e',64:'#e11d48',128:'#facc15',256:'#eab308',512:'#a3e635',1024:'#22c55e',2048:'#4dabff',4096:'#a78bfa'}[v]||'#4dabff';}
   function draw(){
     board.innerHTML='';
-    for(var r=0;r<size;r++)for(var c=0;c<size;c++){var v=g[r][c];var d=document.createElement('div');d.style.cssText='position:absolute;width:'+cell+'px;height:'+cell+'px;left:'+(8+c*(cell+gap))+'px;top:'+(8+r*(cell+gap))+'px;background:'+colors(v)+';border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:'+(v>=1024?'24px':'32px')+';font-weight:800;color:'+(v<=4?'#94a3b8':'#fff')+';transition:.1s';d.textContent=v||'';board.appendChild(d);}
+    for(var r=0;r<size;r++)for(var c=0;c<size;c++){var v=g[r][c];var d=document.createElement('div');d.style.cssText='position:absolute;width:'+cell+'px;height:'+cell+'px;left:'+(8+c*(cell+gap))+'px;top:'+(8+r*(cell+gap))+'px;background:'+colors(v)+';border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:'+Math.round(cell*(v>=1024?0.26:0.34))+'px;font-weight:800;color:'+(v<=4?'#94a3b8':'#fff')+';transition:.1s';d.textContent=v||'';board.appendChild(d);}
     sc.textContent=score;
   }
   function slide(row){var a=row.filter(function(v){return v;});var out=[],i=0;while(i<a.length){if(a[i]===a[i+1]){out.push(a[i]*2);score+=a[i]*2;i+=2;}else{out.push(a[i]);i++;}}while(out.length<size)out.push(0);return out;}
@@ -300,14 +310,14 @@ function start2048(area){
 
 /* ============ 扫雷 ============ */
 function startMine(area){
-  area.innerHTML='<div class="hud">💣 <b id="m-left">10</b> ｜ ⏱ <b id="m-t">0</b>s</div><div id="m-board" style="display:grid;grid-template-columns:repeat(9,38px);gap:2px"></div><div class="hint">点击揭开 · 右键/长按标旗 🚩 · 数字=周围雷数 · 避开所有雷获胜</div><button class="btn" onclick="restartCurrent()" style="margin-top:4px">重新开始</button>';
+  area.innerHTML='<div class="hud">💣 <b id="m-left">10</b> ｜ ⏱ <b id="m-t">0</b>s</div><div id="m-board" style="display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:2px;width:min(360px,90vw)"></div><div class="hint">点击揭开 · 右键/长按标旗 🚩 · 数字=周围雷数 · 避开所有雷获胜</div><button class="btn" onclick="restartCurrent()" style="margin-top:4px">重新开始</button>';
   var R=9,C=9,M=10, board=area.querySelector('#m-board'), leftEl=area.querySelector('#m-left'), tEl=area.querySelector('#m-t');
   var cells=[], started=false, over=false, sec=0, timer=null;
   function mineCount(){return M;}
   function neighbors(r,c){var out=[];for(var dr=-1;dr<=1;dr++)for(var dc=-1;dc<=1;dc++){if(dr||dc){var nr=r+dr,nc=c+dc;if(nr>=0&&nr<R&&nc>=0&&nc<C)out.push([nr,nc]);}}return out;}
   function build(){
     board.innerHTML='';cells=[];started=false;over=false;sec=0;leftEl.textContent=M;tEl.textContent='0';
-    for(var r=0;r<R;r++){cells.push([]);for(var c=0;c<C;c++){cells[r].push({mine:false,open:false,flag:false,n:0,el:null});var el=document.createElement('div');el.style.cssText='width:38px;height:38px;background:#1e293b;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;cursor:pointer;font-size:16px';cells[r][c].el=el;board.appendChild(el);(function(r,c){el.onclick=function(){reveal(r,c);};el.oncontextmenu=function(e){e.preventDefault();flag(r,c);};})(r,c);}}
+    for(var r=0;r<R;r++){cells.push([]);for(var c=0;c<C;c++){cells[r].push({mine:false,open:false,flag:false,n:0,el:null});var el=document.createElement('div');el.style.cssText='width:100%;aspect-ratio:1;background:#1e293b;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;cursor:pointer;font-size:16px';cells[r][c].el=el;board.appendChild(el);(function(r,c){el.onclick=function(){reveal(r,c);};el.oncontextmenu=function(e){e.preventDefault();flag(r,c);};})(r,c);}}
   }
   function placeMines(sr,sc){var n=0;while(n<M){var r=(Math.random()*R)|0,c=(Math.random()*C)|0;if(cells[r][c].mine)continue;if(r===sr&&c===sc)continue;cells[r][c].mine=true;n++;}for(var r=0;r<R;r++)for(var c=0;c<C;c++){cells[r][c].n=neighbors(r,c).filter(function(p){return cells[p[0]][p[1]].mine;}).length;}}
   function paint(){
@@ -410,7 +420,7 @@ function startPlane(area){
 
 /* ============ 记忆翻牌 ============ */
 function startMemory(area){
-  area.innerHTML='<div class="hud">已配对 <b id="mm-p">0</b>/8 ｜ 步数 <b id="mm-m">0</b></div><div id="mm-board" style="display:grid;grid-template-columns:repeat(4,78px);gap:8px"></div><div class="hint">点击翻牌配对相同图案，记住位置</div><button class="btn" onclick="restartCurrent()" style="margin-top:4px">重新开始</button>';
+  area.innerHTML='<div class="hud">已配对 <b id="mm-p">0</b>/8 ｜ 步数 <b id="mm-m">0</b></div><div id="mm-board" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;width:min(336px,90vw)"></div><div class="hint">点击翻牌配对相同图案，记住位置</div><button class="btn" onclick="restartCurrent()" style="margin-top:4px">重新开始</button>';
   var board=area.querySelector('#mm-board'), pEl=area.querySelector('#mm-p'), mEl=area.querySelector('#mm-m');
   var icons=['🍎','🍌','🍇','🍓','🍒','🍉','🥝','🍍'];
   var deck=icons.concat(icons);
@@ -418,14 +428,14 @@ function startMemory(area){
   shuffle(deck);
   board.innerHTML='';
   var first=null, lock=false, pairs=0, moves=0;
-  deck.forEach(function(ic){var d=document.createElement('div');d.style.cssText='width:78px;height:78px;background:#1e293b;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:34px;cursor:pointer';d.dataset.icon=ic;d.dataset.open='0';board.appendChild(d);d.onclick=function(){flip(d);};});
+  deck.forEach(function(ic){var d=document.createElement('div');d.style.cssText='width:100%;aspect-ratio:1;background:#1e293b;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:clamp(22px,8vw,34px);cursor:pointer';d.dataset.icon=ic;d.dataset.open='0';board.appendChild(d);d.onclick=function(){flip(d);};});
   function flip(d){if(lock||d.dataset.open==='1')return;d.dataset.open='1';d.textContent=d.dataset.icon;d.style.background='#243147';if(!first){first=d;return;}moves++;mEl.textContent=moves;if(first.dataset.icon===d.dataset.icon){first=null;pairs++;pEl.textContent=pairs;if(pairs===8){setTimeout(function(){alert('🎉 全配对成功！用了 '+moves+' 步');},10);}}else{lock=true;var a=first,b=d;setTimeout(function(){a.dataset.open='0';a.textContent='';a.style.background='#1e293b';b.dataset.open='0';b.textContent='';b.style.background='#1e293b';first=null;lock=false;},600);}}
   return function(){};
 }
 
 /* ============ 井字棋 ============ */
 function startTtt(area){
-  area.innerHTML='<div class="hud">你是 ❌ ｜ 电脑 ⭕ ｜ <b id="ttt-msg">你的回合</b></div><div id="ttt-board" style="display:grid;grid-template-columns:repeat(3,90px);gap:8px"></div><div class="hint">点击落子，与电脑对战</div><button class="btn" onclick="restartCurrent()" style="margin-top:4px">重开</button>';
+  area.innerHTML='<div class="hud">你是 ❌ ｜ 电脑 ⭕ ｜ <b id="ttt-msg">你的回合</b></div><div id="ttt-board" style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:min(290px,80vw)"></div><div class="hint">点击落子，与电脑对战</div><button class="btn" onclick="restartCurrent()" style="margin-top:4px">重开</button>';
   var board=area.querySelector('#ttt-board'), msg=area.querySelector('#ttt-msg');
   var b=[0,0,0,0,0,0,0,0,0], done=false;
   function win(p){var lines=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];return lines.some(function(l){return b[l[0]]===p&&b[l[1]]===p&&b[l[2]]===p;});}
@@ -433,7 +443,7 @@ function startTtt(area){
   function draw(){var ch=board.children;for(var i=0;i<9;i++){ch[i].textContent=b[i]===1?'❌':(b[i]===2?'⭕':'');}}
   function ai(){var empties=[];b.forEach(function(v,i){if(!v)empties.push(i);});if(!empties.length)return;b[empties[(Math.random()*empties.length)|0]]=2;}
   board.innerHTML='';
-  for(var i=0;i<9;i++){(function(i){var d=document.createElement('div');d.style.cssText='width:90px;height:90px;background:#1e293b;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:40px;cursor:pointer';board.appendChild(d);d.onclick=function(){if(done||b[i])return;b[i]=1;draw();if(win(1)){done=true;msg.textContent='你赢了！';return;}if(full()){done=true;msg.textContent='平局';return;}ai();draw();if(win(2)){done=true;msg.textContent='电脑赢了';return;}if(full()){done=true;msg.textContent='平局';}};})(i);}
+  for(var i=0;i<9;i++){(function(i){var d=document.createElement('div');d.style.cssText='width:100%;aspect-ratio:1;background:#1e293b;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:clamp(28px,10vw,40px);cursor:pointer';board.appendChild(d);d.onclick=function(){if(done||b[i])return;b[i]=1;draw();if(win(1)){done=true;msg.textContent='你赢了！';return;}if(full()){done=true;msg.textContent='平局';return;}ai();draw();if(win(2)){done=true;msg.textContent='电脑赢了';return;}if(full()){done=true;msg.textContent='平局';}};})(i);}
   return function(){};
 }
 
