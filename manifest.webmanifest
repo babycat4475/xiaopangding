@@ -1,0 +1,15 @@
+{
+  "name": "小胖叮 · 经典游戏合集",
+  "short_name": "小胖叮游戏",
+  "description": "10 款经典小游戏，手机/电脑都能玩，离线可玩",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
